@@ -1001,23 +1001,48 @@ const data = [
 	"cqmzqbxzfvonevmmmlxsnjr5zfg",
 ];
 
+const validStrings = { 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9' }
+const validStringsArray = Object.keys(validStrings)
+
 let answer = 0
 const twoDigitNumbers = []
 
-data.map((string) => {
+data.map((row, i) => {
 	const numbersInRow = []
 
-	for (let i = 0; i < string.length; i++) {
-		const letter = string.charAt(i)
+	// strings
+	validStringsArray.map(stringNbr => {
+		const firstIndex = row.indexOf(stringNbr)
+		const lastIndex = row.lastIndexOf(stringNbr)
+
+		if (firstIndex !== -1 && lastIndex !== -1 && firstIndex === lastIndex) {
+			numbersInRow.push({ index: firstIndex, number: validStrings[stringNbr] })
+		} else {
+			if (firstIndex !== -1) {
+				numbersInRow.push({ index: firstIndex, number: validStrings[stringNbr] })
+			}
+			if (lastIndex !== -1) {
+				numbersInRow.push({ index: lastIndex, number: validStrings[stringNbr] })
+			}
+		}
+	})
+
+	// numbers
+	for (let i = 0; i < row.length; i++) {
+		const letter = row.charAt(i)
 
 		if (!isNaN(Number(letter))) {
-			numbersInRow.push(letter)
+			numbersInRow.push({ index: i, number: letter })
 		}
 	}
 
-	const firstNumber = numbersInRow.shift()
-	const lastNumber = numbersInRow.pop() ?? firstNumber
-	const finalNumber = firstNumber + lastNumber
+	numbersInRow.sort((a, b) => {
+		return a.index - b.index
+	})
+
+	const firstNumberObj = numbersInRow.shift()
+	const lastNumberObj = numbersInRow.pop() ?? firstNumberObj
+	const finalNumber = firstNumberObj.number + lastNumberObj.number
 
 	twoDigitNumbers.push(Number(finalNumber))
 });
